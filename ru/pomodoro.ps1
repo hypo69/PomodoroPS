@@ -1,8 +1,8 @@
 Add-Type -AssemblyName System.Windows.Forms, System.Drawing
 
 # Настройки времени (в минутах)
-$workTime = 1 #25
-$breakTime = 1 #5
+$workTime = 25
+$breakTime = 5
 $script:timeLeft = $workTime * 60
 $script:isWorking = $true
 
