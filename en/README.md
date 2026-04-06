@@ -108,4 +108,4 @@ Without this method, the script would terminate immediately after execution. The
 ---
 
 **The final full code**
-can be found in the repository: [pomodoro.ps1](https://github.com/hypo69/PomodoroPS/blob/master/ru/pomodoro.ps1) (Russian version, but code is universal).
+can be found in the repository: [pomodoro.ps1](https://github.com/hypo69/PomodoroPS/blob/master/ен/pomodoro.ps1).
