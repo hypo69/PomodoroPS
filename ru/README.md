@@ -1,10 +1,6 @@
-Добавил акцент на компактности кода в описании.
-
----
-
 # Создаем свой Pomodoro-таймер в системном трее на чистом PowerShell
 
-**Техника Pomodoro** — это популярный метод управления временем, разработанный Франческо Чирилло в конце 1980-х. Его суть проста: вы разбиваете работу на 25-минутные интервалы (называемые «помидорами»), разделенные короткими 5-минутными перерывами. После каждых четырех циклов следует длинный перерыв. Это помогает сохранять концентрацию, избегать выгорания и лучше контролировать рабочий процесс.
+**[Техника Pomodoro](https://habr.com/ru/articles/705334/)** — это популярный метод управления временем, разработанный Франческо Чирилло в конце 1980-х. Его суть проста: вы разбиваете работу на 25-минутные интервалы (называемые «помидорами»), разделенные короткими 5-минутными перерывами. После каждых четырех циклов следует длинный перерыв. Это помогает сохранять концентрацию, избегать выгорания и лучше контролировать рабочий процесс.
 
 В этой статье я покажу, как написать свой Pomodoro-таймер на чистом PowerShell, который будет работать в фоновом режиме, отображать обратный отсчет в заголовке окна и управляться через контекстное меню в системном трее — **при этом весь скрипт занимает менее 100 строк кода**.
 
@@ -111,53 +107,5 @@ $script:ni.ContextMenuStrip = $menu
 
 ---
 
-## Итоговый полный код
-
-Просто скопируйте этот код в файл `pomodoro.ps1` и запустите его.
-
-```powershell
-Add-Type -AssemblyName System.Windows.Forms, System.Drawing
-
-$workTime = 25
-$breakTime = 5
-$script:timeLeft = $workTime * 60
-$script:isWorking = $true
-
-$script:ni = New-Object System.Windows.Forms.NotifyIcon
-$script:ni.Icon = [System.Drawing.SystemIcons]::Information
-$script:ni.Visible = $true
-
-$script:timer = New-Object System.Windows.Forms.Timer
-$script:timer.Interval = 1000
-
-$script:timer.Add_Tick({
-    if ($script:timeLeft -gt 0) { $script:timeLeft-- } 
-    else {
-        $script:isWorking = -not $script:isWorking
-        $script:timeLeft = ($script:isWorking ? $workTime : $breakTime) * 60
-        $script:ni.ShowBalloonTip(5000, "Pomodoro", ($script:isWorking ? "Пора за работу!" : "Время отдыхать!"), "Info")
-    }
-    [int]$m = [Math]::Floor($script:timeLeft / 60); [int]$s = $script:timeLeft % 60
-    $phase = if ($script:isWorking) { "РАБОТА" } else { "ОТДЫХ" }
-    $displayTime = "{0:D2}:{1:D2}" -f $m, $s
-    $script:ni.Text = "Pomodoro [$phase]: $displayTime"
-    $host.UI.RawUI.WindowTitle = "[$displayTime] - $phase"
-    Write-Host "`r>>> Фаза: $phase | Осталось: $displayTime    " -NoNewline -ForegroundColor Cyan
-})
-
-$menu = New-Object System.Windows.Forms.ContextMenuStrip
-$btnStart = New-Object System.Windows.Forms.ToolStripMenuItem("Старт / Пауза")
-$btnStart.add_Click({ if ($script:timer.Enabled) { $script:timer.Stop() } else { $script:timer.Start() } })
-$btnExit = New-Object System.Windows.Forms.ToolStripMenuItem("Выход")
-$btnExit.add_Click({ $script:ni.Visible = $false; Stop-Process -Id $PID })
-
-[void]$menu.Items.Add($btnStart); [void]$menu.Items.Add("-"); [void]$menu.Items.Add($btnExit)
-$script:ni.ContextMenuStrip = $menu
-
-Write-Host ">>> Pomodoro запущен. Нажмите ПКМ по иконке в трее -> Старт." -ForegroundColor Cyan
-[System.Windows.Forms.Application]::Run()
-```
-
-### Заключение
-
-Теперь у вас есть легкий и функциональный инструмент для продуктивной работы, созданный собственными руками. Весь проект уместился в небольшом и понятном скрипте, который практически не потребляет системных ресурсов и легко расширяется: например, можно добавить звуковые уведомления или ведение логов в текстовый файл для анализа продуктивности в конце дня.
+**Итоговый полный код**
+можно найти в репозитории: [pomodoro.ps1](https://github.com/hypo69/PomodoroPS/blob/master/ru/pomodoro.ps1)
